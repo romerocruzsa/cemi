@@ -1,0 +1,68 @@
+/* Magic Bento Card Styles - CEMI Light Theme */
+.bento-card-wrapper {
+  position: relative;
+}
+
+.bento-card {
+  position: relative;
+  background: var(--bento-glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--bento-glass-border);
+  border-radius: var(--bento-radius-lg);
+  box-shadow: 
+    0 4px 6px -1px var(--bento-glass-shadow),
+    0 2px 4px -1px var(--bento-glass-shadow);
+  transition: 
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.bento-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--bento-magic-border);
+  box-shadow: 
+    0 8px 16px -4px var(--bento-glass-shadow),
+    0 0 0 1px var(--bento-magic-border),
+    0 0 24px -8px var(--bento-magic-glow);
+}
+
+.bento-card-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--bento-glow-opacity);
+  background: radial-gradient(
+    circle 300px at var(--bento-glow-x) var(--bento-glow-y),
+    var(--bento-magic-glow) 0%,
+    transparent 70%
+  );
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.bento-card-wrapper:focus-within .bento-card {
+  outline: 2px solid var(--bento-primary);
+  outline-offset: 2px;
+}
+
+/* Responsive Grid - Ensure cards don't stack vertically */
+.bento-grid-container {
+  display: grid !important;
+  width: 100%;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+  .bento-grid-container {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bento-grid-container {
+    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  }
+}

@@ -1,0 +1,78 @@
+@keyframes capicu-logo-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.capicu-logo-marquee {
+  --capicu-logo-marquee-duration: 35s;
+  --capicu-logo-marquee-fade: #ffffff;
+  --capicu-logo-marquee-fade-width: 180px;
+
+  overflow: hidden;
+  padding: 12px 0;
+  white-space: nowrap;
+  position: relative;
+}
+
+.capicu-logo-marquee::before,
+.capicu-logo-marquee::after {
+  position: absolute;
+  top: 0;
+  content: "";
+  width: var(--capicu-logo-marquee-fade-width);
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.capicu-logo-marquee::before {
+  left: 0;
+  background: linear-gradient(
+    to left,
+    rgba(255, 255, 255, 0),
+    var(--capicu-logo-marquee-fade)
+  );
+}
+
+.capicu-logo-marquee::after {
+  right: 0;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0),
+    var(--capicu-logo-marquee-fade)
+  );
+}
+
+.capicu-logo-marquee__content {
+  display: inline-flex;
+  width: max-content;
+}
+
+.capicu-logo-marquee__group {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  animation: capicu-logo-marquee-scroll var(--capicu-logo-marquee-duration)
+    linear infinite;
+  will-change: transform;
+}
+
+.capicu-logo-marquee:hover .capicu-logo-marquee__group {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .capicu-logo-marquee__group {
+    animation: none;
+    transform: none;
+  }
+}
+
+
+
+
+

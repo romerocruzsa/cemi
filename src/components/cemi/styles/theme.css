@@ -1,0 +1,69 @@
+/* Magic Bento Theme - CEMI Branding with Glassmorphism */
+:root {
+  /* CEMI Brand Colors */
+  --bento-bg-primary: #F9F5EA;
+  --bento-bg-secondary: #ffffff;
+  --bento-bg-tertiary: rgba(249, 245, 234, 0.8);
+  
+  /* Glassmorphism (light theme) */
+  --bento-glass-bg: rgba(255, 255, 255, 0.7);
+  --bento-glass-border: rgba(15, 52, 85, 0.15);
+  --bento-glass-shadow: rgba(15, 52, 85, 0.1);
+  
+  /* CEMI Accents */
+  --bento-primary: #D82A2D; /* CEMI Red */
+  --bento-primary-glow: rgba(216, 42, 45, 0.2);
+  --bento-primary-border: rgba(216, 42, 45, 0.3);
+  --bento-primary-hover: rgba(216, 42, 45, 0.08);
+  
+  --bento-dark: #0F3455; /* CEMI Dark Blue */
+  --bento-dark-glow: rgba(15, 52, 85, 0.15);
+  --bento-dark-border: rgba(15, 52, 85, 0.2);
+  --bento-dark-hover: rgba(15, 52, 85, 0.05);
+  
+  /* Magic hover uses purple accent for the gradient effect */
+  --bento-magic-glow: rgba(132, 0, 255, 0.12);
+  --bento-magic-border: rgba(132, 0, 255, 0.25);
+  
+  /* Text Colors */
+  --bento-text-primary: #0F3455;
+  --bento-text-secondary: rgba(15, 52, 85, 0.7);
+  --bento-text-tertiary: rgba(15, 52, 85, 0.5);
+  
+  /* Spacing Scale (8px base) */
+  --bento-space-xs: 0.5rem; /* 8px */
+  --bento-space-sm: 1rem; /* 16px */
+  --bento-space-md: 1.5rem; /* 24px */
+  --bento-space-lg: 2rem; /* 32px */
+  --bento-space-xl: 3rem; /* 48px */
+  
+  /* Border Radius */
+  --bento-radius-sm: 0.75rem; /* 12px */
+  --bento-radius-md: 1rem; /* 16px */
+  --bento-radius-lg: 1.25rem; /* 20px */
+  
+  /* Magic Hover Gradient */
+  --bento-glow-x: 50%;
+  --bento-glow-y: 50%;
+  --bento-glow-opacity: 0;
+  
+  /* Typography */
+  --bento-font-title: 1.5rem;
+  --bento-font-subtitle: 1.125rem;
+  --bento-font-body: 0.875rem;
+  --bento-font-meta: 0.75rem;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --bento-transition: none;
+  }
+}
+
+/* CEMI Theme Base */
+.cemi-theme {
+  background-color: var(--bento-bg-primary);
+  color: var(--bento-text-primary);
+}
+

@@ -1,0 +1,11 @@
+CEMI
+Copyright 2026 Capicú Technologies
+
+This product includes software developed by Capicú Technologies.
+
+Project repository:
+https://github.com/capicu-pr/cemi
+
+Citation request:
+If you use CEMI in research, benchmarks, products, or publications,
+please cite the software using the metadata in CITATION.cff.

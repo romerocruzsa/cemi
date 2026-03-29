@@ -1,0 +1,41 @@
+.cemi-tour-popover {
+  background: #f9f5ea;
+  color: #0f3455;
+  border: 1px solid rgba(15, 52, 85, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 24px 80px rgba(15, 52, 85, 0.18);
+}
+
+.cemi-tour-popover .driver-popover-title {
+  color: #0f3455;
+  font-weight: 600;
+}
+
+.cemi-tour-popover .driver-popover-description {
+  color: rgba(15, 52, 85, 0.78);
+}
+
+.cemi-tour-popover .driver-popover-progress-text {
+  color: rgba(15, 52, 85, 0.62);
+}
+
+.cemi-tour-popover .driver-popover-footer button {
+  border-radius: 9999px;
+  border: 1px solid rgba(15, 52, 85, 0.14);
+  box-shadow: none;
+}
+
+.cemi-tour-popover .driver-popover-next-btn {
+  background: #0f3455;
+  color: #ffffff;
+  text-shadow: none;
+}
+
+.cemi-tour-popover .driver-popover-next-btn:hover {
+  background: #123d63;
+}
+
+.cemi-tour-popover .driver-popover-close-btn,
+.cemi-tour-popover .driver-popover-prev-btn {
+  color: rgba(15, 52, 85, 0.72);
+}

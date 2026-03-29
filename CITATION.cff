@@ -1,0 +1,55 @@
+cff-version: 1.2.0
+title: "Capicú Edge ML Inference (CEMI)"
+message: "If you use CEMI in research, products, benchmarks, or publications, please cite the software using the metadata below."
+type: software
+
+authors:
+  - family-names: "Cruz Romero"
+    given-names: "Sebastián A."
+    affiliation: "Capicú Technologies"
+    orcid: "https://orcid.org/0000-0003-3892-2273"
+
+  - family-names: "Maldonado Guerra"
+    given-names: "Shenied E."
+    affiliation: "Capicú Technologies"
+
+preferred-citation:
+  type: software
+  title: "Capicú Edge ML Inference (CEMI)"
+  authors:
+    - family-names: "Cruz Romero"
+      given-names: "Sebastián A."
+      affiliation: "Capicú Technologies"
+      orcid: "https://orcid.org/0000-0003-3892-2273"
+
+    - family-names: "Maldonado Guerra"
+      given-names: "Shenied E."
+      affiliation: "Capicú Technologies"
+
+  year: 2026
+  url: "https://github.com/capicu-pr/cemi"
+  version: "0.1.1"
+
+abstract: >
+  CEMI is an edge AI tool for managing and analyzing runs, comparisons,
+  and explicit action-event streams across local and extensible testing
+  of model compression and evaluation workflows.
+
+repository-code: "https://github.com/capicu-pr/cemi"
+url: "https://github.com/capicu-pr/cemi"
+
+keywords:
+  - machine learning
+  - edge ai
+  - tinyml
+  - model compression
+  - evaluation
+  - experiment tracking
+  - run analysis
+  - dashboard
+  - console
+  - compare
+  - cli
+
+version: "0.1.1"
+date-released: 2026-03-26

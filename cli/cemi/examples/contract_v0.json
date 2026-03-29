@@ -1,0 +1,38 @@
+{
+  "version": "0",
+  "baseline": {
+    "run_id": ""
+  },
+  "gates": [
+    {
+      "id": "quality_no_more_than_1pct_drop",
+      "role": "quality",
+      "metric": { "name": "final_accuracy", "source": "summary_metrics" },
+      "direction": "higher_is_better",
+      "relative_degradation": { "max_pct": 1.0 }
+    },
+    {
+      "id": "p99_latency_under_120ms",
+      "role": "performance",
+      "metric": { "name": "latency_ms", "source": "metrics", "aggregation": "p99", "tags": { "scenario": "interactive" } },
+      "direction": "lower_is_better",
+      "absolute": { "max": 120.0 }
+    }
+  ],
+  "cost": {
+    "currency": "USD",
+    "output": {
+      "metric": { "name": "outputs", "source": "summary_metrics" },
+      "fallback": 1
+    },
+    "rates": {
+      "default_per_hour": 1.0,
+      "by_tag": [
+        { "tags": { "device": "cpu" }, "per_hour": 0.25 },
+        { "tags": { "device": "L4" }, "per_hour": 1.5 },
+        { "tags": { "device": "A100" }, "per_hour": 6.0 }
+      ]
+    }
+  }
+}
+

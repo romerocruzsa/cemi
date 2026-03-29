@@ -1,0 +1,35 @@
+{
+  "contract_id": "uuid",
+  "project": "acme-voice",
+  "name": "Prod ASR - Server SLA",
+
+  "quality": {
+    "metric": "delta_wer",
+    "direction": "lower_is_better",
+    "operator": "<=",
+    "threshold": 0.05,
+    "notes": "WER must not worsen by more than +5 absolute points"
+  },
+
+  "performance": [
+    {
+      "scenario": "server",
+      "metric": "latency_p99_ms",
+      "operator": "<=",
+      "threshold": 300,
+      "unit": "ms"
+    }
+  ],
+
+  "resources": [
+    { "metric": "peak_gpu_mem_gb", "operator": "<=", "threshold": 24 }
+  ],
+
+  "cost": {
+    "output_unit": "outputs",
+    "throughput_metric": "throughput_outputs_per_s",
+    "price_per_hour_metric": "price_per_hour_usd",
+    "derive_cost_per_output": true
+  }
+}
+
