@@ -11,6 +11,9 @@ Commit messages follow [Conventional Commits](https://www.conventionalcommits.or
 ## [Unreleased]
 
 ### Added
+- `writer.log_contract_result(result)`: attaches a contract verification result to the
+  active run; included in the next `emit_run_record()` call under `payload.contract_result`.
+  Resets automatically when `start_run()` is called for a new run.
 - `cemi verify` command: evaluates a recorded run against a contract JSON file and
   reports pass/fail for each gate using the existing `evaluate_contract()` engine.
   - Accepts `--contract FILE`, `--run RUN_ID_OR_PATH`, `--save-dir DIR`.
@@ -18,6 +21,9 @@ Commit messages follow [Conventional Commits](https://www.conventionalcommits.or
   - `--output json` emits a machine-readable result; `--output-file FILE` writes it to disk.
 - `load_run_for_evaluation(path)` public function in `cemi.contract`: loads the latest
   `run_record` from a JSONL file with normalization for both v1 and v2 payload schemas.
+
+### Fixed
+- `cemi help` now lists the `verify` command.
 
 ---
 

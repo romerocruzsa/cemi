@@ -91,6 +91,7 @@ def _print_help_commands() -> None:
         ("view", "Open the local workspace without starting a run"),
         ("gateway", "Start local gateway (read runs from .cemi/runs)"),
         ("stop", "Stop background local gateway and workspace frontend"),
+        ("verify", "Evaluate a run against a contract and report pass/fail"),
     ]
     for cmd, desc in commands:
         table.add_row(Text("cemi " + cmd, style="cyan"), Text(desc, style="white"))

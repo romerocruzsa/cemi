@@ -278,6 +278,7 @@ class Writer:
     _metric_events: List[Dict[str, Any]] = field(default_factory=list)
     _metric_summary: List[Dict[str, Any]] = field(default_factory=list)
     _action_events: List[Dict[str, Any]] = field(default_factory=list)
+    _contract_result: Optional[Dict[str, Any]] = field(default=None)
 
     _run_id: str | None = None
     _project: str | None = None
@@ -394,6 +395,7 @@ class Writer:
         self._metric_events = []
         self._metric_summary = []
         self._action_events = []
+        self._contract_result = None
         self._sync_context_parameters()
         self._record_action_event(
             action="start_run",
@@ -1080,6 +1082,35 @@ class Writer:
     # ----------------------------
     # Emission
     # ----------------------------
+    def log_contract_result(self, result: Dict[str, Any]) -> None:
+        """
+        Attach a contract verification result to this run.
+
+        The result is included in the next ``emit_run_record()`` call under
+        ``payload.contract_result``.  Typically called after ``cemi verify``
+        or after evaluating a contract programmatically::
+
+            from cemi.contract import evaluate_contract, load_contract, load_run_for_evaluation
+            contract = load_contract("contract.json")
+            run = load_run_for_evaluation(".cemi/runs/my-run.jsonl")
+            result = evaluate_contract(runs=[run], contract=contract)
+            writer.log_contract_result(result["results"][0])
+            writer.emit_run_record()
+
+        Args:
+            result: A dict with at minimum ``"pass": bool``.  The full gate
+                    result returned by ``evaluate_contract()`` is accepted as-is.
+        """
+        self._require_run()
+        if not isinstance(result, dict):
+            raise TypeError("contract result must be a dict")
+        self._contract_result = dict(result)
+        self._record_action_event(
+            action="log_contract_result",
+            summary="pass" if result.get("pass") else "fail",
+            output=f"gates={len(result.get('gate_results', []))}",
+        )
+
     def emit_run_record(self) -> Dict[str, Any]:
         """
         Emit the current run snapshot to the configured sink.
@@ -1109,6 +1140,8 @@ class Writer:
 
         payload["artifacts"] = list(self._artifacts)
         payload["action_events"] = list(self._action_events)
+        if self._contract_result is not None:
+            payload["contract_result"] = dict(self._contract_result)
 
         # Legacy attachments for existing UI
         if self._summary_metrics:
