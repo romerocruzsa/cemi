@@ -7,6 +7,7 @@ import { AnimatedInput, animationPresets, shadowPresets } from "../../ui/animate
 import { ScrollArea, ScrollBar } from "../../ui/scroll-area";
 import { MetricWidget, WIDGET_RUN_COLORS } from "./widgets/MetricWidget";
 import { discoverMetricNames, runsToMetricWidgetData } from "./widgets/runMetricsToWidgetData";
+import { ContractBadge } from "./ContractBadge";
 
 const TABLE_HEADER_BACKGROUND = "rgba(15, 52, 85, 0.05)";
 const RUN_COLORS = ["#D82A2D", "#0F3455", "#A67C52", "#2D6A4F", "#6B4EFF", "#C65D2E"];
@@ -482,6 +483,9 @@ export function RunsPage({
                         Status
                       </th>
                       <th style={{ padding: RUNS_TABLE_HEADER_PADDING, textAlign: "left", fontSize: "0.875rem", fontWeight: 600, color: "#0F3455", minWidth: RUNS_TABLE_COLUMN_MIN_WIDTH }}>
+                        Verified
+                      </th>
+                      <th style={{ padding: RUNS_TABLE_HEADER_PADDING, textAlign: "left", fontSize: "0.875rem", fontWeight: 600, color: "#0F3455", minWidth: RUNS_TABLE_COLUMN_MIN_WIDTH }}>
                         Last edited
                       </th>
                       {scalarMetricColumns.map((column) => (
@@ -669,6 +673,9 @@ function RunRow({
         >
           {resolvedRun.status || "—"}
         </span>
+      </td>
+      <td style={{ padding: RUNS_TABLE_CELL_PADDING, textAlign: "left" }}>
+        <ContractBadge result={resolvedRun.contract_result} size="sm" />
       </td>
       <td style={{ padding: RUNS_TABLE_CELL_PADDING, textAlign: "left" }}>
         <span style={{ display: "block", fontSize: "0.875rem", color: "rgba(15, 52, 85, 0.7)" }}>
