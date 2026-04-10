@@ -23,6 +23,7 @@ import { getDuration, formatDuration } from "../../../utils/runHelpers";
 import { animationPresets } from "../../ui/animated-interactive";
 import { ButtonUtility } from "../../base/buttons/button-utility";
 import { ContractBadge } from "./ContractBadge";
+import { VerifiedColumnHelp } from "./VerifiedColumnHelp";
 
 interface RunsTableProps {
   runs: RunRecord[];
@@ -310,7 +311,12 @@ export function RunsTable({
           <ColumnHeader field="name">Name</ColumnHeader>
           <ColumnHeader field="status">Status</ColumnHeader>
           <TableHead style={{ backgroundColor: "var(--cemi-surface-bg, #F9F5EA)", whiteSpace: "nowrap" }}>
-            <span className="text-xs font-medium uppercase tracking-wide text-[rgba(15,52,85,0.7)]">Verified</span>
+            <div className="flex items-center gap-1">
+              <span className="text-xs font-medium uppercase tracking-wide text-[rgba(15,52,85,0.7)]">
+                Verified
+              </span>
+              <VerifiedColumnHelp />
+            </div>
           </TableHead>
           <ColumnHeader field="created_at">Created</ColumnHeader>
           <ColumnHeader field="duration">Duration</ColumnHeader>
@@ -334,7 +340,7 @@ export function RunsTable({
           )}
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="relative z-0">
         {sortedRuns.length === 0 ? (
           <TableRow>
             <TableCell

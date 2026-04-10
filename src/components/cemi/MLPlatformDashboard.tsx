@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { MLPlatformLayout } from "./layout/MLPlatformLayout";
 import { RunsPage } from "./runs/RunsPage";
 import { WorkspacePage } from "../../pages/workspace/WorkspacePage";
@@ -22,6 +22,8 @@ import {
   mergeProjectsWithDevDefaults,
 } from "../../mocks/defaultWorkspace";
 import { createCemiTourController } from "../../tour/driverTour";
+import { WorkspaceThemeProvider } from "../../contexts/WorkspaceThemeContext";
+import { getWorkspaceThemeCssVars } from "../../utils/workspaceThemeCssVars";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:3141";
 const IS_LOCAL_API = !API_BASE.trim() || isLocalHostUrl(API_BASE);
@@ -107,6 +109,23 @@ export function MLPlatformDashboard({ onNavigate }: MLPlatformDashboardProps) {
     if (typeof window === "undefined") return;
     window.localStorage.setItem("cemi-tool-theme", toolThemeMode);
   }, [toolThemeMode]);
+
+  // Portals and third-party layers read from :root; keep tokens in sync (no remove on theme
+  // change — only clear when leaving the workspace shell).
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const { cssVars } = getWorkspaceThemeCssVars(toolThemeMode);
+    for (const [key, value] of Object.entries(cssVars)) {
+      root.style.setProperty(key, value);
+    }
+  }, [toolThemeMode]);
+
+  useLayoutEffect(() => {
+    return () => {
+      document.documentElement.style.removeProperty("--cemi-surface-bg");
+      document.documentElement.style.removeProperty("--cemi-dock-bg");
+    };
+  }, []);
 
   useEffect(() => {
     const experimentIds = new Set(getExperimentOptions(runs).map((experiment) => experiment.id));
@@ -442,24 +461,26 @@ export function MLPlatformDashboard({ onNavigate }: MLPlatformDashboardProps) {
   };
 
   return (
-    <MLPlatformLayout
-      currentPath={routeState.path}
-      toolThemeMode={toolThemeMode}
-      currentProject={currentProject}
-      currentProjectName={currentProjectName}
-      projects={projects}
-      currentExperiment={selectedExperiment}
-      experiments={experimentOptions}
-      runSummary={{
-        totalRuns: runs.length,
-        runningRuns: runningCount,
-        compareRuns: routeState.compareRunIds.length,
-      }}
-      onToolThemeModeChange={setToolThemeMode}
-      onNavigate={handleNavigate}
-      onProjectChange={openProject}
-      onExperimentChange={setSelectedExperiment}
-      children={renderPage()}
-    />
+    <WorkspaceThemeProvider toolThemeMode={toolThemeMode}>
+      <MLPlatformLayout
+        currentPath={routeState.path}
+        toolThemeMode={toolThemeMode}
+        currentProject={currentProject}
+        currentProjectName={currentProjectName}
+        projects={projects}
+        currentExperiment={selectedExperiment}
+        experiments={experimentOptions}
+        runSummary={{
+          totalRuns: runs.length,
+          runningRuns: runningCount,
+          compareRuns: routeState.compareRunIds.length,
+        }}
+        onToolThemeModeChange={setToolThemeMode}
+        onNavigate={handleNavigate}
+        onProjectChange={openProject}
+        onExperimentChange={setSelectedExperiment}
+        children={renderPage()}
+      />
+    </WorkspaceThemeProvider>
   );
 }

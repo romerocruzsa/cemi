@@ -3,6 +3,7 @@ import { ArrowLeft, Activity, Play, GitCompare, Terminal } from "lucide-react";
 import { BottomDock } from "./BottomDock";
 import { theme } from "../../../theme";
 import type { ExperimentOption } from "../../../utils/experiments";
+import { getWorkspaceThemeCssVars } from "../../../utils/workspaceThemeCssVars";
 import { Tabs, TabsList, TabsTrigger } from "../../ui/tabs";
 
 interface MLPlatformLayoutProps {
@@ -45,13 +46,8 @@ export function MLPlatformLayout({
   onExperimentChange,
 }: MLPlatformLayoutProps) {
   const showProjectShell = Boolean(currentProject && currentPath !== "/workspace");
-  const workspaceSurfaceColor = toolThemeMode === "light" ? "#FFFFFF" : theme.colors.beige.lightest;
-  const dockSurfaceColor =
-    toolThemeMode === "light" ? "rgba(255, 255, 255, 0.92)" : "rgba(249, 245, 234, 0.88)";
-  const workspaceThemeVars = {
-    "--cemi-surface-bg": workspaceSurfaceColor,
-    "--cemi-dock-bg": dockSurfaceColor,
-  } as React.CSSProperties;
+  const { workspaceSurfaceColor, cssVars } = getWorkspaceThemeCssVars(toolThemeMode);
+  const workspaceThemeVars = cssVars as React.CSSProperties;
 
   const resolvedProjectName =
     currentProjectName || projects.find((project) => project.id === currentProject)?.name || currentProject || "Project";
