@@ -814,6 +814,192 @@ def verify(
     sys.exit(0 if overall_pass else 1)
 
 
+def _render_qualify_certificate(run: dict, fingerprint: dict | None, eqc: dict | None, gate: dict | None, overall: bool) -> None:
+    from rich.table import Table as RichTable
+    from rich.panel import Panel
+
+    run_id = run.get("id") or run.get("run_id") or "?"
+    _console.print()
+    _console.print(Text("Qualification Certificate", style="bold") + Text(f"  run: {run_id}", style="dim"))
+    _console.print()
+
+    # Platform fingerprint
+    if fingerprint:
+        fp_table = RichTable(show_header=False, box=None, padding=(0, 2))
+        fp_table.add_column("Key", style="dim", width=24)
+        fp_table.add_column("Value", style="white")
+        fp_table.add_row("Runtime", fingerprint.get("runtime", "—"))
+        fp_table.add_row("Hardware backend", fingerprint.get("hardware_backend", "—"))
+        simd = fingerprint.get("simd_flags")
+        fp_table.add_row("SIMD flags", ", ".join(simd) if isinstance(simd, list) and simd else "—")
+        fp_table.add_row("Framework version", fingerprint.get("framework_version") or "—")
+        _console.print(Text("  Platform", style="bold dim"))
+        _console.print(fp_table)
+        _console.print()
+
+    # EQC assignment
+    if eqc:
+        eqc_table = RichTable(show_header=False, box=None, padding=(0, 2))
+        eqc_table.add_column("Key", style="dim", width=24)
+        eqc_table.add_column("Value", style="white")
+        eqc_table.add_row("EQC id", eqc.get("eqc_id", "—"))
+        eqc_table.add_row("Reference runtime", eqc.get("reference_runtime", "—"))
+        eqc_table.add_row("Reference hardware", eqc.get("reference_hardware", "—"))
+        delta = eqc.get("output_delta_norm")
+        delta_str = f"{delta:.6g}" if isinstance(delta, (int, float)) else "—"
+        tol = eqc.get("tolerance")
+        tol_str = f"{tol:.6g}" if isinstance(tol, (int, float)) else "—"
+        eqc_table.add_row("Output δ norm", f"{delta_str}  (tolerance: {tol_str})")
+        within = eqc.get("delta_within_tolerance", True)
+        eqc_table.add_row("Within tolerance", _verdict_text(bool(within)))
+        _console.print(Text("  Behavioral Equivalence", style="bold dim"))
+        _console.print(eqc_table)
+        _console.print()
+
+    # Accuracy gate
+    if gate:
+        gate_table = RichTable(show_header=False, box=None, padding=(0, 2))
+        gate_table.add_column("Key", style="dim", width=24)
+        gate_table.add_column("Value", style="white")
+        gate_table.add_row("Metric", gate.get("metric_name", "—"))
+        val = gate.get("metric_value")
+        thr = gate.get("threshold")
+        gate_table.add_row("Value", f"{val:.6g}" if isinstance(val, (int, float)) else "—")
+        gate_table.add_row("Threshold", f"{thr:.6g}" if isinstance(thr, (int, float)) else "—")
+        gate_table.add_row("Direction", gate.get("direction", "—"))
+        gate_table.add_row("Result", _verdict_text(bool(gate.get("pass"))))
+        _console.print(Text("  Accuracy Gate", style="bold dim"))
+        _console.print(gate_table)
+        _console.print()
+
+    if overall:
+        _console.print(Text("Verdict: ", style="bold") + Text("QUALIFIED", style="bold green") + Text(" — all checks satisfied.", style="dim"))
+    else:
+        _console.print(Text("Verdict: ", style="bold") + Text("NOT QUALIFIED", style="bold red") + Text(" — one or more checks failed.", style="dim"))
+    _console.print()
+
+
+@app.command()
+@click.option(
+    "--run",
+    "run_ref",
+    required=True,
+    help="Run ID (resolved from --save-dir) or direct path to a .jsonl file.",
+)
+@click.option(
+    "--save-dir",
+    default=None,
+    type=click.Path(exists=False, path_type=str),
+    help="Save directory to search for runs/ (default: .cemi).",
+)
+@click.option(
+    "--output",
+    "output_fmt",
+    default="text",
+    type=click.Choice(["text", "json"]),
+    show_default=True,
+    help="Output format.",
+)
+@click.option(
+    "--output-file",
+    "output_file",
+    default=None,
+    type=click.Path(),
+    help="Write output to a file instead of stdout.",
+)
+def qualify(
+    run_ref: str,
+    save_dir: str | None,
+    output_fmt: str,
+    output_file: str | None,
+) -> None:
+    """Print a qualification certificate for a run (StaticQualify, Algorithm 1).
+
+    Reads platform_fingerprint, eqc_assignment, and accuracy_gate fields written
+    by log_platform_fingerprint(), log_eqc_assignment(), and log_accuracy_gate().
+
+    Exits 0 if all present checks pass, 1 if any check fails, 2 on error or if
+    no qualification data is found in the run.
+
+    \b
+    Examples:
+      cemi qualify --run my-run-id
+      cemi qualify --run .cemi/runs/abc123.jsonl --output json
+    """
+    import json as _json
+    import sys
+
+    # Resolve run path
+    run_path = _resolve_run_jsonl(run_ref, save_dir)
+    if run_path is None:
+        _console_err.print(
+            Text(f"Run not found: {run_ref!r}", style="red")
+            + Text(
+                f"\n  Looked in: {Path(save_dir or DEFAULT_SAVE_DIR).expanduser() / 'runs' / (run_ref + '.jsonl')}",
+                style="dim",
+            )
+        )
+        sys.exit(2)
+
+    # Load run
+    try:
+        run = load_run_for_evaluation(run_path)
+    except Exception as exc:
+        _console_err.print(Text(f"Error loading run: {exc}", style="red"))
+        sys.exit(2)
+
+    if run is None:
+        _console_err.print(Text(f"No valid run_record found in: {run_path}", style="red"))
+        sys.exit(2)
+
+    fingerprint = run.get("platform_fingerprint") if isinstance(run.get("platform_fingerprint"), dict) else None
+    eqc = run.get("eqc_assignment") if isinstance(run.get("eqc_assignment"), dict) else None
+    gate = run.get("accuracy_gate") if isinstance(run.get("accuracy_gate"), dict) else None
+
+    if fingerprint is None and eqc is None and gate is None:
+        _console_err.print(
+            Text("No qualification data found in this run.", style="red")
+            + Text(
+                "\n  Log qualification data using log_platform_fingerprint(), "
+                "log_eqc_assignment(), and log_accuracy_gate() in your evaluation script.",
+                style="dim",
+            )
+        )
+        sys.exit(2)
+
+    # Compute overall verdict
+    checks_passed = []
+    if eqc is not None:
+        checks_passed.append(bool(eqc.get("delta_within_tolerance", True)))
+    if gate is not None:
+        checks_passed.append(bool(gate.get("pass", False)))
+    overall_pass = all(checks_passed) if checks_passed else False
+
+    run_id = run.get("id") or run.get("run_id") or run_ref
+
+    if output_fmt == "json":
+        out: dict = {
+            "run_id": run_id,
+            "verdict": "qualified" if overall_pass else "not_qualified",
+        }
+        if fingerprint:
+            out["platform_fingerprint"] = fingerprint
+        if eqc:
+            out["eqc_assignment"] = eqc
+        if gate:
+            out["accuracy_gate"] = gate
+        text = _json.dumps(out, indent=2)
+        if output_file:
+            Path(output_file).write_text(text, encoding="utf-8")
+            _console.print(Text(f"Wrote certificate to {output_file}", style="dim"))
+        else:
+            click.echo(text)
+    else:
+        _render_qualify_certificate(run, fingerprint, eqc, gate, overall_pass)
+
+    sys.exit(0 if overall_pass else 1)
+
+
 def main_entry() -> None:
     """Entry point for the 'cemi' console script."""
     app()
