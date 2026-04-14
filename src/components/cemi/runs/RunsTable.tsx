@@ -232,9 +232,9 @@ export function RunsTable({
         </TableCell>
 
         {/* Name */}
-        <TableCell className="font-medium text-[#0F3455]">
+        <TableCell className="font-medium text-[#0F3455] w-[180px] max-w-[180px]">
           <motion.span
-            className="truncate max-w-[200px] block hover:underline"
+            className="break-words whitespace-normal block hover:underline leading-snug"
             whileHover={{ x: 2 }}
             transition={{ duration: 0.15 }}
           >
@@ -308,7 +308,7 @@ export function RunsTable({
             className="w-[80px]"
             style={{ backgroundColor: "var(--cemi-surface-bg, #F9F5EA)" }}
           />
-          <ColumnHeader field="name">Name</ColumnHeader>
+          <ColumnHeader field="name" width="180px">Name</ColumnHeader>
           <ColumnHeader field="status">Status</ColumnHeader>
           <TableHead style={{ backgroundColor: "var(--cemi-surface-bg, #F9F5EA)", whiteSpace: "nowrap" }}>
             <div className="flex items-center gap-1">
@@ -359,3 +359,5 @@ export function RunsTable({
     </Table>
   );
 }
+
+export default RunsTable;
